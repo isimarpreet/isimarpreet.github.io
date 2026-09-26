@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Simarpreet Singh | Backend Software Engineer</title>
+<meta name="description" content="Simarpreet Singh, backend software engineer. Python, FastAPI, PostgreSQL, multi-tenant SaaS, authentication, integrations and LLM/RAG systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+:root{
+  --bg:#FFFFFF; --soft:#F7F5FF; --ink:#16123A; --muted:#5F5A7D; --line:#ECE9F7;
+  --primary:#5B3BF6; --primary-2:#7C5CFF; --pink:#F43F86; --amber:#FFB020; --cyan:#0EB5E9; --green:#12B76A;
+  --grad:linear-gradient(100deg,#5B3BF6 0%,#A43CF0 45%,#F43F86 100%);
+  --font:"Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --radius:24px; --shadow:0 24px 48px -28px rgba(40,24,120,.35);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+/* This site stays light in every viewer theme */
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#FFFFFF; --soft:#F7F5FF; --ink:#16123A; } }
+:root[data-theme="dark"]{ --bg:#FFFFFF; --soft:#F7F5FF; --ink:#16123A; }
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 90px)}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font); font-size:1.0625rem; line-height:1.65; overflow-x:hidden; -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{letter-spacing:-.025em; line-height:1.12}
+a{color:inherit; text-decoration:none}
+img{max-width:100%}
+button,input,textarea{font:inherit; color:inherit}
+::selection{background:var(--primary); color:#fff}
+:focus-visible{outline:3px solid var(--primary); outline-offset:3px; border-radius:8px}
+.wrap{max-width:1180px; margin:0 auto; padding:0 28px}
+.grad-text{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+/* ---------- Cursor (desktop only) ---------- */
+.cur-dot,.cur-ring{position:fixed; top:0; left:0; pointer-events:none; z-index:200; border-radius:50%; opacity:0; transition:opacity .3s}
+.cur-dot{width:6px; height:6px; background:var(--primary); margin:-3px 0 0 -3px}
+.cur-ring{width:36px; height:36px; margin:-18px 0 0 -18px; border:1.5px solid rgba(91,59,246,.45); transition:width .25s,height .25s,margin .25s,background .25s,border-color .25s,opacity .3s}
+.cur-ring.hover{width:56px; height:56px; margin:-28px 0 0 -28px; background:rgba(91,59,246,.08); border-color:rgba(91,59,246,.7)}
+body.cursor-on .cur-dot, body.cursor-on .cur-ring{opacity:1}
+
+/* ---------- Page transition ---------- */
+#wipe{position:fixed; inset:0; z-index:150; background:var(--grad); transform:scaleY(0); transform-origin:bottom; pointer-events:none}
+#wipe.in{animation:wipeIn .45s cubic-bezier(.7,0,.3,1) forwards}
+#wipe.out{animation:wipeOut .5s cubic-bezier(.7,0,.3,1) forwards}
+@keyframes wipeIn{from{transform:scaleY(0); transform-origin:bottom}to{transform:scaleY(1); transform-origin:bottom}}
+@keyframes wipeOut{from{transform:scaleY(1); transform-origin:top}to{transform:scaleY(0); transform-origin:top}}
+#progress{position:fixed; top:env(safe-area-inset-top,0px); left:0; height:3px; width:100%; background:var(--grad); transform-origin:0 50%; transform:scaleX(0); z-index:120}
+
+/* ---------- Nav ---------- */
+header.nav{position:fixed; top:env(safe-area-inset-top,0px); left:0; right:0; z-index:100; transition:background .3s, box-shadow .3s}
+header.nav.scrolled{background:rgba(255,255,255,.85); backdrop-filter:blur(14px); box-shadow:0 1px 0 var(--line)}
+.nav .wrap{display:flex; align-items:center; justify-content:space-between; height:80px; gap:20px}
+.logo{display:flex; align-items:center; gap:12px; font-weight:800; font-size:1.1rem}
+.logo b{display:grid; place-items:center; width:40px; height:40px; border-radius:12px; background:var(--grad); color:#fff; font-size:.95rem; letter-spacing:0}
+.links{display:flex; gap:4px; align-items:center}
+.links a{position:relative; padding:9px 14px; border-radius:10px; font-weight:600; font-size:.95rem; color:var(--muted); transition:color .2s, background .2s}
+.links a:hover{color:var(--ink); background:var(--soft)}
+.links a.active{color:var(--primary)}
+.links a.active::after{content:""; position:absolute; left:14px; right:14px; bottom:3px; height:2px; border-radius:2px; background:var(--grad)}
+.nav-cta{display:flex; gap:10px; align-items:center}
+.burger{display:none; width:44px; height:44px; border-radius:12px; border:1px solid var(--line); background:#fff; cursor:pointer; position:relative}
+.burger span,.burger span::before,.burger span::after{position:absolute; left:12px; width:20px; height:2px; background:var(--ink); border-radius:2px; transition:transform .3s}
+.burger span{top:21px} .burger span::before{content:""; left:0; top:-6px} .burger span::after{content:""; left:0; top:6px}
+body.menu-open .burger span{background:transparent} body.menu-open .burger span::before{transform:translateY(6px) rotate(45deg)} body.menu-open .burger span::after{transform:translateY(-6px) rotate(-45deg)}
+.mobile-menu{position:fixed; inset:0; z-index:90; background:#fff; padding:calc(env(safe-area-inset-top,0px) + 110px) 28px 40px; display:flex; flex-direction:column; gap:6px; transform:translateY(-100%); transition:transform .5s cubic-bezier(.7,0,.3,1)}
+.mobile-menu a{font-size:2rem; font-weight:800; padding:8px 0; border-bottom:1px solid var(--line)}
+.mobile-menu a.active{color:var(--primary)}
+body.menu-open .mobile-menu{transform:none}
+@media (max-width:960px){ .links{display:none} .burger{display:block} .nav-cta .btn{display:none} }
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:14px 24px; border-radius:14px; font-weight:700; font-size:1rem; border:0; cursor:pointer; position:relative; overflow:hidden; isolation:isolate; transition:box-shadow .3s, color .3s}
+.btn-primary{background:var(--primary); color:#fff; box-shadow:0 12px 24px -12px rgba(91,59,246,.7)}
+.btn-primary::before{content:""; position:absolute; inset:0; background:var(--grad); opacity:0; transition:opacity .35s; z-index:-1}
+.btn-primary:hover::before{opacity:1}
+.btn-primary:hover{box-shadow:0 18px 30px -12px rgba(244,63,134,.55)}
+.btn-outline{background:#fff; color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn-outline:hover{box-shadow:inset 0 0 0 1.5px var(--primary); color:var(--primary)}
+.btn svg{width:18px; height:18px; transition:transform .3s}
+.btn:hover svg{transform:translateX(3px)}
+.text-link{display:inline-flex; align-items:center; gap:8px; font-weight:700; color:var(--primary)}
+.text-link svg{width:18px; height:18px; transition:transform .3s}
+.text-link:hover svg{transform:translateX(4px)}
+
+/* ---------- Common ---------- */
+main{min-height:100vh}
+.page-hero{padding:170px 0 70px; position:relative; overflow:hidden; background:linear-gradient(180deg,var(--soft),#fff)}
+.page-hero .glow{position:absolute; width:520px; height:520px; border-radius:50%; filter:blur(90px); opacity:.35; right:-140px; top:-140px; background:var(--primary-2)}
+.page-hero .glow.g2{background:var(--pink); right:auto; left:-200px; top:auto; bottom:-280px; opacity:.2}
+.page-hero .wrap{position:relative}
+.eyebrow{display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:.92rem; color:var(--primary); background:#fff; border:1px solid var(--line); padding:6px 14px; border-radius:999px; margin-bottom:22px}
+.eyebrow i{width:8px; height:8px; border-radius:50%; background:var(--grad)}
+.page-hero h1{font-size:clamp(2.6rem,6vw,4.4rem); font-weight:800; max-width:18ch}
+.page-hero p.lead{margin-top:20px; font-size:1.2rem; color:var(--muted); max-width:58ch}
+.crumbs{display:flex; gap:8px; font-weight:600; font-size:.92rem; color:var(--muted); margin-bottom:18px}
+.crumbs a:hover{color:var(--primary)}
+section.sec{padding:100px 0}
+section.sec.tint{background:var(--soft)}
+.sec-head{display:flex; justify-content:space-between; align-items:end; gap:24px; flex-wrap:wrap; margin-bottom:48px}
+.sec-head h2{font-size:clamp(2rem,4vw,3rem); font-weight:800; max-width:20ch}
+.sec-head p{color:var(--muted); max-width:46ch}
+.card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s}
+.card.lift:hover{transform:translateY(-6px); box-shadow:var(--shadow); border-color:transparent}
+.spot{position:relative; overflow:hidden}
+.spot::before{content:""; position:absolute; inset:0; background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(91,59,246,.10),transparent 45%); opacity:0; transition:opacity .3s; pointer-events:none}
+.spot:hover::before{opacity:1}
+.tags{display:flex; flex-wrap:wrap; gap:8px; list-style:none; padding:0; margin:0}
+.tags li{padding:6px 13px; border-radius:10px; background:var(--soft); border:1px solid var(--line); font-weight:600; font-size:.88rem; color:var(--ink)}
+.js .rv{opacity:0; transform:translateY(34px); transition:opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1)}
+.js .rv.in{opacity:1; transform:none}
+.rv.d1{transition-delay:.08s} .rv.d2{transition-delay:.16s} .rv.d3{transition-delay:.24s} .rv.d4{transition-delay:.32s}
+
+/* ---------- Home hero ---------- */
+.hero{position:relative; min-height:100vh; display:flex; align-items:center; padding:130px 0 80px; overflow:hidden; background:radial-gradient(1200px 600px at 80% 0%,#EFEAFF 0%,transparent 60%),radial-gradient(900px 500px at 0% 100%,#FFE9F2 0%,transparent 60%),#fff}
+.hero .dots{position:absolute; inset:0; background-image:radial-gradient(rgba(91,59,246,.18) 1px,transparent 1px); background-size:26px 26px; mask-image:radial-gradient(ellipse at 70% 40%,#000 10%,transparent 65%)}
+.hero .wrap{position:relative; display:grid; grid-template-columns:1.15fr .85fr; gap:64px; align-items:center; width:100%}
+@media (max-width:960px){.hero .wrap{grid-template-columns:1fr; gap:56px}}
+.avail{display:inline-flex; align-items:center; gap:10px; font-weight:600; font-size:.93rem; background:#fff; border:1px solid var(--line); padding:8px 16px 8px 12px; border-radius:999px; box-shadow:0 10px 24px -16px rgba(91,59,246,.5)}
+.avail i{width:9px; height:9px; border-radius:50%; background:var(--green); animation:ping 2s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(18,183,106,.6)}100%{box-shadow:0 0 0 10px rgba(18,183,106,0)}}
+.hero h1{font-size:clamp(2.9rem,6.6vw,5.4rem); font-weight:800; margin:26px 0 22px; line-height:1.02; letter-spacing:-.035em}
+.hero h1 .row{display:block; overflow:hidden}
+.hero h1 .row > span{display:inline-block; transform:translateY(105%); animation:rise 1s cubic-bezier(.2,.8,.2,1) forwards}
+.hero h1 .row:nth-child(2) > span{animation-delay:.12s}
+@keyframes rise{to{transform:none}}
+.typed{font-size:clamp(1.2rem,2.3vw,1.6rem); font-weight:700; color:var(--muted); min-height:1.6em}
+.typed b{color:var(--primary)}
+.typed .caret{display:inline-block; width:2px; height:1.1em; background:var(--primary); vertical-align:-3px; margin-left:3px; animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.hero p.lead{font-size:1.15rem; color:var(--muted); max-width:50ch; margin-top:16px}
+.hero .ctas{display:flex; gap:14px; flex-wrap:wrap; margin-top:34px}
+.hero .meta{display:flex; gap:24px; flex-wrap:wrap; margin-top:34px; font-weight:600; font-size:.95rem; color:var(--muted)}
+.hero .meta a:hover{color:var(--primary)}
+.portrait-wrap{position:relative; justify-self:center; width:min(100%,420px)}
+.portrait{aspect-ratio:4/5; border-radius:32px; background:linear-gradient(150deg,#E9E2FF,#FFE3EF 60%,#FFF1D6); display:grid; place-items:center; text-align:center; color:var(--muted); font-weight:600; position:relative; overflow:hidden; box-shadow:var(--shadow); transition:transform .4s}
+.portrait .ini{font-size:5.5rem; font-weight:800; line-height:1; margin-bottom:10px}
+.portrait::after{content:""; position:absolute; inset:0; border-radius:inherit; box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+.orbit{position:absolute; inset:-26px; border:1.5px dashed rgba(91,59,246,.25); border-radius:44px; pointer-events:none}
+.chip{position:absolute; background:#fff; border:1px solid var(--line); border-radius:16px; padding:12px 16px; font-weight:700; font-size:.9rem; display:flex; gap:10px; align-items:center; box-shadow:var(--shadow); animation:bob 5s ease-in-out infinite}
+.chip em{font-style:normal; width:32px; height:32px; border-radius:10px; display:grid; place-items:center}
+.chip small{display:block; font-weight:600; color:var(--muted); font-size:.78rem}
+.chip.c1{top:10%; left:-18%} .chip.c1 em{background:#EDE7FF; color:var(--primary)}
+.chip.c2{bottom:14%; right:-14%; animation-delay:-2.5s} .chip.c2 em{background:#FFE4EF; color:var(--pink)}
+@keyframes bob{50%{transform:translateY(-10px)}}
+@media (max-width:560px){.chip.c1{left:-4%} .chip.c2{right:-4%}}
+
+/* ---------- Stats ---------- */
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
+@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+.stat{padding:26px 24px}
+.stat b{display:block; font-size:2.5rem; font-weight:800; line-height:1; margin-bottom:10px}
+.stat span{color:var(--muted); font-weight:600; font-size:.95rem}
+
+/* ---------- Services ---------- */
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
+@media (max-width:960px){.grid3{grid-template-columns:1fr}}
+.svc{padding:34px}
+.svc .ico{width:56px; height:56px; border-radius:16px; display:grid; place-items:center; margin-bottom:26px; transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.svc:hover .ico{transform:rotate(-8deg) scale(1.08)}
+.svc .ico svg{width:26px; height:26px}
+.svc h3{font-size:1.35rem; font-weight:800; margin-bottom:10px}
+.svc p{color:var(--muted)}
+.i1{background:#EDE7FF; color:var(--primary)} .i2{background:#FFE4EF; color:var(--pink)} .i3{background:#FFF1D1; color:#C98200} .i4{background:#DDF5FD; color:#0A8FBA} .i5{background:#DDF7EA; color:#0A8F53} .i6{background:#F1E6FF; color:#8A2BE2}
+
+/* ---------- Project cards ---------- */
+.pgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:26px}
+@media (max-width:860px){.pgrid{grid-template-columns:1fr}}
+.pcard{display:flex; flex-direction:column; overflow:hidden}
+.pcard .cover{aspect-ratio:16/10; position:relative; overflow:hidden; display:grid; place-items:center}
+.pcard .cover .scr{width:78%; aspect-ratio:16/10; background:rgba(255,255,255,.92); border-radius:14px; box-shadow:0 30px 50px -24px rgba(0,0,0,.4); transform:translateY(14%); transition:transform .6s cubic-bezier(.2,.8,.2,1); display:grid; grid-template-rows:auto 1fr; overflow:hidden}
+.pcard:hover .cover .scr{transform:translateY(6%) scale(1.03)}
+.scr .bar{height:26px; display:flex; gap:6px; align-items:center; padding:0 12px; border-bottom:1px solid #eee}
+.scr .bar i{width:8px; height:8px; border-radius:50%; background:#E3E0EF}
+.scr .body{display:grid; place-items:center; color:var(--muted); font-weight:600; font-size:.88rem}
+.pcard .info{padding:28px; display:flex; flex-direction:column; gap:12px; flex:1}
+.pcard .top{display:flex; justify-content:space-between; gap:12px; align-items:center; font-weight:700; font-size:.88rem; color:var(--muted)}
+.pcard h3{font-size:1.6rem; font-weight:800}
+.pcard p{color:var(--muted)}
+.pcard .tags{margin-top:auto; padding-top:8px}
+.cv1{background:linear-gradient(135deg,#5B3BF6,#9C7BFF)} .cv2{background:linear-gradient(135deg,#F43F86,#FF8A6B)} .cv3{background:linear-gradient(135deg,#0EB5E9,#22D3A6)} .cv4{background:linear-gradient(135deg,#FFB020,#FF7A45)} .cv5{background:linear-gradient(135deg,#312E81,#6D28D9)}
+.filters{display:flex; gap:8px; flex-wrap:wrap}
+.filters button{border:1px solid var(--line); background:#fff; padding:9px 16px; border-radius:12px; font-weight:700; font-size:.92rem; color:var(--muted); cursor:pointer; transition:all .25s}
+.filters button:hover{color:var(--ink); border-color:var(--ink)}
+.filters button.on{background:var(--ink); color:#fff; border-color:var(--ink)}
+.pcard.hidden{display:none}
+
+/* ---------- Case study ---------- */
+.case-cover{border-radius:32px; aspect-ratio:21/9; display:grid; place-items:center; margin-top:-10px; overflow:hidden}
+.case-cover .scr{width:70%; transform:translateY(12%)}
+@media (max-width:700px){.case-cover{aspect-ratio:4/3} .case-cover .scr{width:88%}}
+.case-grid{display:grid; grid-template-columns:.36fr 1fr; gap:64px; margin-top:70px}
+@media (max-width:900px){.case-grid{grid-template-columns:1fr; gap:36px}}
+.facts{display:flex; flex-direction:column; gap:22px; position:sticky; top:110px; align-self:start}
+@media (max-width:900px){.facts{position:static; display:grid; grid-template-columns:1fr 1fr}}
+.facts div span{display:block; font-weight:600; color:var(--muted); font-size:.9rem; margin-bottom:4px}
+.facts div b{font-weight:700}
+.case-body h2{font-size:1.8rem; font-weight:800; margin:0 0 14px}
+.case-body section{margin-bottom:48px}
+.case-body p{color:var(--muted); font-size:1.1rem; max-width:64ch}
+.checks{list-style:none; padding:0; margin:0; display:grid; gap:14px}
+.checks li{display:flex; gap:14px; padding:18px 20px; border:1px solid var(--line); border-radius:16px; background:#fff; color:var(--ink); font-weight:500}
+.checks li svg{flex:none; width:22px; height:22px; color:var(--primary); margin-top:2px}
+.case-nav{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:34px; margin-top:20px}
+
+/* ---------- Experience ---------- */
+.tl{position:relative; padding-left:52px; max-width:900px}
+.tl .rail{position:absolute; left:14px; top:10px; bottom:10px; width:3px; background:var(--line); border-radius:2px; overflow:hidden}
+.tl .rail i{position:absolute; inset:0; background:linear-gradient(var(--primary),var(--pink),var(--amber)); transform-origin:top; transform:scaleY(0)}
+.job{position:relative; padding:32px; margin-bottom:26px}
+.job::before{content:""; position:absolute; left:-47px; top:36px; width:22px; height:22px; border-radius:50%; background:#fff; border:5px solid var(--c,var(--primary)); box-shadow:0 0 0 6px #fff}
+.job.j2{--c:var(--pink)} .job.j3{--c:var(--amber)}
+.job .head{display:flex; justify-content:space-between; gap:12px 24px; flex-wrap:wrap; align-items:start}
+.job h3{font-size:1.45rem; font-weight:800}
+.job .org{font-weight:700; color:var(--c,var(--primary)); margin-top:2px}
+.pill-date{font-weight:700; font-size:.88rem; padding:6px 14px; border-radius:999px; background:var(--soft); border:1px solid var(--line); white-space:nowrap}
+.job ul{margin:18px 0 18px; padding-left:20px; color:var(--muted)}
+.job li{margin-bottom:8px}
+.job li strong{color:var(--ink); font-weight:700}
+
+/* ---------- Skills ---------- */
+.sgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
+@media (max-width:960px){.sgrid{grid-template-columns:1fr 1fr}} @media (max-width:640px){.sgrid{grid-template-columns:1fr}}
+.skill{padding:30px}
+.skill .ico{width:50px; height:50px; border-radius:14px; display:grid; place-items:center; margin-bottom:20px}
+.skill .ico svg{width:24px; height:24px}
+.skill h3{font-size:1.25rem; font-weight:800; margin-bottom:16px}
+.tags li{transition:background .25s,color .25s,transform .25s}
+.skill .tags li:hover{background:var(--ink); color:#fff; transform:translateY(-2px)}
+
+/* ---------- About ---------- */
+.about-grid{display:grid; grid-template-columns:.8fr 1.2fr; gap:70px; align-items:start}
+@media (max-width:900px){.about-grid{grid-template-columns:1fr; gap:40px}}
+.about-grid .portrait{position:sticky; top:110px}
+@media (max-width:900px){.about-grid .portrait{position:relative; top:0; max-width:420px}}
+.prose p{font-size:1.15rem; color:var(--muted); margin-bottom:20px; max-width:62ch}
+.prose p strong{color:var(--ink)}
+.values{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:36px}
+@media (max-width:600px){.values{grid-template-columns:1fr}}
+.values .card{padding:24px}
+.values h4{font-weight:800; font-size:1.1rem; margin-bottom:6px}
+.values p{color:var(--muted); font-size:.98rem}
+.edu{display:grid; grid-template-columns:1fr 1fr; gap:22px}
+@media (max-width:760px){.edu{grid-template-columns:1fr}}
+.edu .card{padding:32px}
+.edu h3{font-size:1.3rem; font-weight:800; margin:14px 0 6px}
+.edu p{color:var(--muted)}
+
+/* ---------- Contact ---------- */
+.contact-grid{display:grid; grid-template-columns:.9fr 1.1fr; gap:48px}
+@media (max-width:900px){.contact-grid{grid-template-columns:1fr}}
+.cinfo{display:grid; gap:16px; align-content:start}
+.cinfo a,.cinfo div.card{display:flex; gap:16px; align-items:center; padding:22px}
+.cinfo .ico{width:48px; height:48px; border-radius:14px; display:grid; place-items:center; flex:none}
+.cinfo .ico svg{width:22px; height:22px}
+.cinfo span{display:block; font-size:.88rem; color:var(--muted); font-weight:600}
+.cinfo b{font-weight:700; word-break:break-word}
+form.card{padding:36px; display:grid; gap:18px}
+label{display:grid; gap:8px; font-weight:700; font-size:.95rem}
+input,textarea{width:100%; padding:14px 16px; border-radius:14px; border:1.5px solid var(--line); background:var(--soft); transition:border-color .25s, background .25s, box-shadow .25s}
+input:focus,textarea:focus{outline:none; border-color:var(--primary); background:#fff; box-shadow:0 0 0 4px rgba(91,59,246,.12)}
+textarea{min-height:150px; resize:vertical}
+.form-note{font-size:.9rem; color:var(--muted)}
+.form-note.err{color:#D92D20; font-weight:600}
+
+/* ---------- CTA band + footer ---------- */
+.cta-band{margin:0 auto; border-radius:32px; padding:64px; background:var(--grad); color:#fff; position:relative; overflow:hidden; display:flex; justify-content:space-between; align-items:center; gap:30px; flex-wrap:wrap}
+.cta-band::before{content:""; position:absolute; width:420px; height:420px; border-radius:50%; background:rgba(255,255,255,.14); right:-120px; top:-200px}
+.cta-band h2{font-size:clamp(1.9rem,4vw,2.9rem); font-weight:800; max-width:18ch; position:relative}
+.cta-band p{opacity:.9; margin-top:10px; position:relative}
+.cta-band .btn{background:#fff; color:var(--ink); position:relative}
+.cta-band .btn:hover{box-shadow:0 18px 30px -14px rgba(0,0,0,.4)}
+@media (max-width:600px){.cta-band{padding:40px 28px}}
+footer{padding:80px 0 36px; border-top:1px solid var(--line); margin-top:100px}
+.fgrid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px}
+@media (max-width:760px){.fgrid{grid-template-columns:1fr 1fr} .fgrid > div:first-child{grid-column:1/-1}}
+footer h4{font-weight:800; margin-bottom:14px}
+footer p{color:var(--muted); max-width:36ch; margin-top:14px}
+footer ul{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+footer ul a{color:var(--muted); font-weight:600}
+footer ul a:hover{color:var(--primary)}
+.fbottom{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:60px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); font-size:.92rem}
+
+@media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important; transition:none!important} .hero h1 .row > span{transform:none} .js .rv{opacity:1; transform:none} }
+</style>
+</head>
+<body>
+<div class="cur-dot" id="dot"></div><div class="cur-ring" id="ring"></div>
+<div id="wipe"></div><div id="progress"></div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#/"><b>SS</b>Simarpreet Singh</a>
+    <nav class="links" aria-label="Main" id="links"></nav>
+    <div class="nav-cta">
+      <a class="btn btn-primary mag" href="#/contact">Hire me</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+<nav class="mobile-menu" id="mobile" aria-label="Mobile"></nav>
+
+<main id="app" tabindex="-1"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div><a class="logo" href="#/"><b>SS</b>Simarpreet Singh</a><p>Backend software engineer building APIs, multi-tenant SaaS and AI features with Python, FastAPI and PostgreSQL.</p></div>
+      <div><h4>Pages</h4><ul id="flinks"></ul></div>
+      <div><h4>Connect</h4><ul>
+        <li><a href="mailto:isimarpreet26@gmail.com">Email</a></li>
+        <li><a href="https://linkedin.com/in/simarpreet-singh" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="#" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="#">Résumé (PDF)</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom"><span>© 2026 Simarpreet Singh. All rights reserved.</span><span>Chandigarh, India</span></div>
+  </div>
+</footer>
+
+<script>
+/* ======================= DATA ======================= */
+const ICON = {
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M6 11l6 6 6-6M5 20h14"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" opacity=".25"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>',
+  api:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
+  ai:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>',
+  db:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>',
+  plug:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 01-12 0zM12 17v5"/></svg>',
+  cloud:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 11.9-9.9A6 6 0 0119 10a4 4 0 010 8z"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>',
+  in:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 110 5 2.5 2.5 0 010-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V21h-4z"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  grad:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg>',
+  medal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="6"/><path d="M8.5 10L6 3h4l2 5M15.5 10L18 3h-4l-2 5"/></svg>'
+};
+
+const PAGES = [['/','Home'],['/about','About'],['/experience','Experience'],['/projects','Projects'],['/skills','Skills'],['/contact','Contact']];
+
+const PROJECTS = [
+  { slug:'onaqt', name:'ONAQT', cover:'cv1', cat:'saas', catLabel:'SaaS platform', period:'May 2025 – Present', role:'Core backend developer', company:'Atvantiq Networks',
+    tagline:'Multi-tenant workforce management SaaS for telecom teams.',
+    overview:'ONAQT helps telecom companies manage clients, projects, sites, attendance, work tracking, expense claims and geo-tracking in one platform. Each customer runs as an isolated tenant with its own PostgreSQL schema.',
+    built:['Backend for a multi-tenant platform with schema-per-tenant PostgreSQL isolation.','The expense claims module end to end: database design, approval workflow state machine and reporting APIs.','Authentication and authorization with JWT, OTP login, refresh tokens and role-based access control.','One-way Zoho Books accounting sync over OAuth 2.0, with scheduled and webhook-triggered runs.','Automated attendance processing jobs and push notifications for real-time updates.'],
+    stack:['FastAPI','PostgreSQL','Supabase','SQLAlchemy','Alembic','Docker','Zoho Books API'] },
+  { slug:'koursair', name:'Koursair', cover:'cv2', cat:'saas', catLabel:'Web platform', period:'Aug 2026 – Present', role:'Backend developer', company:'',
+    tagline:'Travel booking platform with secure login and online payments.',
+    overview:'Koursair is a travel booking platform. I built the backend services that handle bookings, user accounts and payments, and ran its development and production deployments.',
+    built:['Booking, authentication and password-recovery REST APIs.','Supabase Auth with Google, Apple and email sign-in.','PayPal payment gateway integration.','Payments and booking database schema.','Dockerised dev and production deployments.'],
+    stack:['FastAPI','PostgreSQL','Supabase Auth','PayPal','Docker'] },
+  { slug:'susmafia-agent', name:'SusMafia AI Agent', cover:'cv3', cat:'ai', catLabel:'AI agent', period:'Jan 2026 – Present', role:'Freelance AI engineer', company:'SusMafia',
+    tagline:'A WhatsApp AI prospecting agent used by 40+ people.',
+    overview:'Users ask plain-language questions on WhatsApp and get answers from a private climate-tech executive database, helping them find the right contacts and plan outreach.',
+    built:['Retrieval-Augmented Generation backend on FastAPI, PostgreSQL and Supabase.','WhatsApp interface through the Twilio WhatsApp API.','A smart router that sends each query to the most cost-efficient LLM.','A PII masking layer to protect personal data and support compliance.'],
+    stack:['FastAPI','PostgreSQL','Supabase','Twilio','OpenAI','RAG'] },
+  { slug:'renovaite', name:'Renovaite', cover:'cv4', cat:'ai', catLabel:'AI app', period:'Personal project', role:'Developer', company:'',
+    tagline:'AI home design assistant for room makeovers.',
+    overview:'Upload a photo of a room and Renovaite suggests design changes, estimates the cost and shows an updated visual of the space.',
+    built:['Room image analysis with the Gemini API.','Design suggestions and cost estimates generated from each photo.','Updated room visualisations in a React front end.'],
+    stack:['Java','Gemini API','React'] },
+  { slug:'university-chatbot', name:'University Chatbot', cover:'cv5', cat:'ai', catLabel:'AI app', period:'Academic project', role:'Developer', company:'',
+    tagline:'Conversational assistant for students and applicants.',
+    overview:'A chatbot that answers questions about admissions, placements, faculty and campus resources, so students get answers without searching through pages.',
+    built:['FastAPI backend connected to the OpenAI API.','Conversational flows for admissions, placements, faculty and campus topics.','React chat interface.'],
+    stack:['Python','FastAPI','OpenAI API','React'] }
+];
+
+const SKILLS = [
+  ['Backend','api','i1',['Python','FastAPI','REST API design','Pydantic','SQLAlchemy','Alembic','Celery','WebSockets','Redis','Java']],
+  ['Databases','db','i4',['PostgreSQL','Supabase','Firebase','Schema design','Query optimisation','Migrations','Multi-tenant architecture']],
+  ['Security','lock','i2',['JWT','OAuth 2.0','RBAC','OTP verification','Supabase Auth','PII masking']],
+  ['Integrations','plug','i3',['Zoho Books API','Webhooks','Data sync','PayPal','Twilio WhatsApp','Salesforce','OpenAI API','Gemini API']],
+  ['AI / ML','ai','i6',['LLM orchestration','RAG','Vector search','Prompt engineering','AI agents']],
+  ['DevOps & tools','cloud','i5',['Docker','Docker Compose','Linux','Git & GitHub','CI/CD','Postman','n8n','Monitoring']]
+];
+
+/* ======================= TEMPLATES ======================= */
+const screen = (label) => `<div class="scr"><div class="bar"><i></i><i></i><i></i></div><div class="body">${label}</div></div>`;
+const pcard = (p,i) => `
+  <a class="card lift pcard rv d${(i%2)+1}" href="#/projects/${p.slug}" data-cat="${p.cat}">
+    <div class="cover ${p.cover}">${screen('Screenshot coming soon')}</div>
+    <div class="info">
+      <div class="top"><span>${p.catLabel}</span><span>${p.period}</span></div>
+      <h3>${p.name}</h3><p>${p.tagline}</p>
+      <ul class="tags">${p.stack.slice(0,4).map(s=>`<li>${s}</li>`).join('')}</ul>
+      <span class="text-link">Read case study ${ICON.arrow}</span>
+    </div>
+  </a>`;
+const ctaBand = `
+  <section class="sec" style="padding-bottom:0"><div class="wrap"><div class="cta-band rv">
+    <div><h2>Looking for a backend engineer?</h2><p>I'm open to full-time roles in India and remote. I reply within 24 hours.</p></div>
+    <a class="btn mag" href="#/contact">Get in touch ${ICON.arrow}</a>
+  </div></div></section>`;
+const pageHero = (eyebrow,title,lead) => `
+  <section class="page-hero"><div class="glow"></div><div class="glow g2"></div><div class="wrap">
+    <span class="eyebrow rv"><i></i>${eyebrow}</span>
+    <h1 class="rv d1">${title}</h1>
+    <p class="lead rv d2">${lead}</p>
+  </div></section>`;
+
+const VIEWS = {
+  '/': () => `
+    <section class="hero" id="hero"><div class="dots"></div>
+      <div class="wrap">
+        <div>
+          <span class="avail"><i></i>Open to backend &amp; AI engineering roles</span>
+          <h1><span class="row"><span>Hi, I'm</span></span><span class="row"><span class="grad-text">Simarpreet Singh</span></span></h1>
+          <div class="typed">I build <b id="typed"></b><span class="caret"></span></div>
+          <p class="lead">Backend software engineer with 1.5+ years shipping production REST APIs, multi-tenant SaaS and LLM features in Python, FastAPI and PostgreSQL.</p>
+          <div class="ctas">
+            <a class="btn btn-primary mag" href="#/projects">View my work ${ICON.arrow}</a>
+            <a class="btn btn-outline mag" href="#">Download résumé ${ICON.down}</a>
+          </div>
+          <div class="meta"><a href="mailto:isimarpreet26@gmail.com">isimarpreet26@gmail.com</a><a href="https://linkedin.com/in/simarpreet-singh" target="_blank" rel="noopener">LinkedIn</a><span>Chandigarh, India</span></div>
+        </div>
+        <div class="portrait-wrap rv d2" id="pwrap">
+          <div class="orbit"></div>
+          <div class="portrait tilt"><div><div class="ini grad-text">SS</div>Your photo goes here</div></div>
+          <div class="chip c1"><em>${ICON.api}</em><div>FastAPI<small>Production APIs</small></div></div>
+          <div class="chip c2"><em>${ICON.ai}</em><div>RAG &amp; agents<small>LLM features</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" style="padding-top:70px"><div class="wrap"><div class="stats">
+      <div class="card lift stat rv"><b class="grad-text"><span class="count" data-to="1.5" data-dec="1">0</span>+</b><span>Years of experience</span></div>
+      <div class="card lift stat rv d1"><b class="grad-text"><span class="count" data-to="3">0</span></b><span>Products in production</span></div>
+      <div class="card lift stat rv d2"><b class="grad-text"><span class="count" data-to="40">0</span>+</b><span>Users on my AI agent</span></div>
+      <div class="card lift stat rv d3"><b class="grad-text"><span class="count" data-to="8.32" data-dec="2">0</span></b><span>B.Tech CSE GPA</span></div>
+    </div></div></section>
+
+    <section class="sec tint"><div class="wrap">
+      <div class="sec-head"><h2 class="rv">What I bring to your team</h2><p class="rv d1">Backend depth across the parts that products depend on most.</p></div>
+      <div class="grid3">
+        <div class="card lift spot svc rv"><div class="ico i1">${ICON.api}</div><h3>APIs &amp; SaaS backends</h3><p>REST APIs in FastAPI with clean PostgreSQL schemas, migrations and schema-per-tenant isolation.</p></div>
+        <div class="card lift spot svc rv d1"><div class="ico i2">${ICON.lock}</div><h3>Auth &amp; integrations</h3><p>JWT, OTP, OAuth 2.0 and RBAC, plus reliable data syncs with Zoho Books, PayPal and Twilio.</p></div>
+        <div class="card lift spot svc rv d2"><div class="ico i3">${ICON.ai}</div><h3>AI &amp; LLM features</h3><p>RAG pipelines, multi-model routing and PII masking for AI features that are cost-efficient and safe.</p></div>
+      </div>
+    </div></section>
+
+    <section class="sec"><div class="wrap">
+      <div class="sec-head"><h2 class="rv">Featured projects</h2><a class="text-link rv d1" href="#/projects">See all projects ${ICON.arrow}</a></div>
+      <div class="pgrid">${PROJECTS.slice(0,2).map(pcard).join('')}</div>
+    </div></section>
+    ${ctaBand}`,
+
+  '/about': () => `
+    ${pageHero('About me','Engineer who cares about what happens after launch.','A backend developer focused on systems that stay secure, fast and easy to maintain.')}
+    <section class="sec"><div class="wrap about-grid">
+      <div class="portrait tilt rv"><div><div class="ini grad-text">SS</div>Your photo goes here</div></div>
+      <div>
+        <div class="prose">
+          <p class="rv">I'm <strong>Simarpreet Singh</strong>, a backend software engineer based in Chandigarh. For the past 1.5+ years I've been building production systems with <strong>Python, FastAPI and PostgreSQL</strong>.</p>
+          <p class="rv">At <strong>Atvantiq Networks</strong> I'm a core backend developer on ONAQT, a multi-tenant workforce SaaS. I own modules from database design to production release, including the authentication layer, the expense claims workflow and the Zoho Books integration.</p>
+          <p class="rv">Alongside that, I work as a freelance AI engineer for <strong>SusMafia</strong>, where I built a WhatsApp AI agent that 40+ people use to search a private executive database in plain language.</p>
+          <p class="rv">I'm looking for a team where I can own backend systems end to end and keep growing into distributed systems and AI infrastructure.</p>
+        </div>
+        <div class="values">
+          <div class="card lift rv"><h4>Ownership</h4><p>I take features from schema design to deployment and keep watching them in production.</p></div>
+          <div class="card lift rv d1"><h4>Security first</h4><p>Access control and tenant isolation are designed in from the start, not added later.</p></div>
+          <div class="card lift rv d2"><h4>Reliability</h4><p>Idempotent syncs, retries and clear error handling so integrations recover on their own.</p></div>
+          <div class="card lift rv d3"><h4>Practical AI</h4><p>LLM features that are useful, affordable and careful with personal data.</p></div>
+        </div>
+      </div>
+    </div></section>
+    <section class="sec tint"><div class="wrap">
+      <div class="sec-head"><h2 class="rv">Education &amp; leadership</h2></div>
+      <div class="edu">
+        <div class="card lift rv"><div class="ico i1" style="width:50px;height:50px;border-radius:14px;display:grid;place-items:center">${ICON.grad}</div><h3>B.Tech, Computer Science &amp; Engineering</h3><p>Guru Gobind Singh Indraprastha University, New Delhi<br>Aug 2021 – Jul 2025 · GPA 8.32/10</p><ul class="tags" style="margin-top:16px"><li>Data Structures</li><li>DBMS</li><li>Operating Systems</li><li>Computer Networks</li><li>Machine Learning</li></ul></div>
+        <div class="card lift rv d1"><div class="ico i2" style="width:50px;height:50px;border-radius:14px;display:grid;place-items:center">${ICON.medal}</div><h3>Sergeant, National Cadet Corps</h3><p>Jan 2025 – Jul 2025<br>Mentored cadets and led team activities.</p></div>
+      </div>
+    </div></section>
+    ${ctaBand}`,
+
+  '/experience': () => `
+    ${pageHero('Experience','Where I\'ve worked and what I shipped.','From an internship in enterprise software to owning production modules in a multi-tenant SaaS.')}
+    <section class="sec"><div class="wrap"><div class="tl" id="tl"><div class="rail"><i id="rail"></i></div>
+      <article class="card job rv">
+        <div class="head"><div><h3>Software Engineer (Backend)</h3><div class="org">Atvantiq Networks Pvt Ltd · Mohali</div></div><span class="pill-date">Mar 2025 – Present</span></div>
+        <ul>
+          <li>Design and build scalable REST APIs with FastAPI and PostgreSQL for <strong>ONAQT</strong>, owning modules from database design to production release.</li>
+          <li>Built the auth layer: <strong>JWT access, OTP login, refresh-token flow and RBAC</strong> with tenant-level data isolation across all endpoints.</li>
+          <li>Integrated <strong>Zoho Books via REST and OAuth 2.0</strong>, syncing customers, invoices, bills and payments with scheduled and webhook-triggered runs, idempotent upserts and retry logic.</li>
+          <li>Designed schemas and migrations with SQLAlchemy and Alembic, and <strong>optimised queries and indexes</strong> to reduce response times on high-volume attendance and claims endpoints.</li>
+          <li>Manage Docker-based deployments, environment configuration and production releases on Linux servers.</li>
+        </ul>
+        <ul class="tags"><li>FastAPI</li><li>PostgreSQL</li><li>SQLAlchemy</li><li>Alembic</li><li>Docker</li><li>OAuth 2.0</li></ul>
+      </article>
+      <article class="card job j2 rv">
+        <div class="head"><div><h3>Freelance AI Engineer</h3><div class="org">SusMafia · Remote</div></div><span class="pill-date">Jan 2026 – Present</span></div>
+        <ul>
+          <li>Developed a <strong>WhatsApp AI prospecting agent for 40+ users</strong>, enabling real-time natural-language queries over a private climate-tech executive database.</li>
+          <li>Built the RAG backend with FastAPI, PostgreSQL and Supabase, integrated with the Twilio WhatsApp API.</li>
+          <li>Designed a <strong>smart router for cost-efficient multi-model LLM orchestration</strong> and a PII masking layer for privacy and compliance.</li>
+        </ul>
+        <ul class="tags"><li>RAG</li><li>LLMs</li><li>Twilio</li><li>Supabase</li></ul>
+      </article>
+      <article class="card job j3 rv">
+        <div class="head"><div><h3>Software Engineer Intern</h3><div class="org">BPTP Pvt. Ltd.</div></div><span class="pill-date">Aug 2024 – Nov 2024</span></div>
+        <ul><li>Built a Salesforce app with Lightning Web Components, migrated data with Data Loader, automated workflows in Asite and worked with SAP ABAP SmartForms.</li></ul>
+        <ul class="tags"><li>Salesforce</li><li>LWC</li><li>SAP ABAP</li></ul>
+      </article>
+    </div></div></section>
+    ${ctaBand}`,
+
+  '/projects': () => `
+    ${pageHero('Projects','Products I\'ve built and shipped.','Production SaaS, payment platforms and AI agents. Open any project to read the full case study.')}
+    <section class="sec"><div class="wrap">
+      <div class="sec-head" style="margin-bottom:36px"><div class="filters rv" id="filters">
+        <button class="on" data-f="all">All</button><button data-f="saas">SaaS &amp; platforms</button><button data-f="ai">AI &amp; LLM</button>
+      </div></div>
+      <div class="pgrid">${PROJECTS.map(pcard).join('')}</div>
+    </div></section>
+    ${ctaBand}`,
+
+  '/skills': () => `
+    ${pageHero('Skills','My technical toolkit.','The languages, frameworks and tools I use to build and run production backends.')}
+    <section class="sec"><div class="wrap"><div class="sgrid">
+      ${SKILLS.map((s,i)=>`<div class="card lift spot skill rv d${i%3+1}"><div class="ico ${s[2]}">${ICON[s[1]]}</div><h3>${s[0]}</h3><ul class="tags">${s[3].map(t=>`<li>${t}</li>`).join('')}</ul></div>`).join('')}
+    </div></div></section>
+    ${ctaBand}`,
+
+  '/contact': () => `
+    ${pageHero('Contact','Let\'s work together.','Hiring for a backend or AI engineering role, or have a project in mind? Send me a message.')}
+    <section class="sec"><div class="wrap contact-grid">
+      <div class="cinfo">
+        <a class="card lift rv" href="mailto:isimarpreet26@gmail.com"><div class="ico i1">${ICON.mail}</div><div><span>Email</span><b>isimarpreet26@gmail.com</b></div></a>
+        <a class="card lift rv d1" href="https://linkedin.com/in/simarpreet-singh" target="_blank" rel="noopener"><div class="ico i4">${ICON.in}</div><div><span>LinkedIn</span><b>linkedin.com/in/simarpreet-singh</b></div></a>
+        <div class="card rv d2"><div class="ico i2">${ICON.pin}</div><div><span>Location</span><b>Chandigarh, India · open to remote</b></div></div>
+      </div>
+      <form class="card rv d1" id="cform" novalidate>
+        <label>Your name<input name="name" autocomplete="name" required></label>
+        <label>Your email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Message<textarea name="msg" required placeholder="Tell me about the role or project"></textarea></label>
+        <button class="btn btn-primary" type="submit">Send message ${ICON.arrow}</button>
+        <p class="form-note" id="fnote">This opens your email app with the message ready to send.</p>
+      </form>
+    </div></section>`
+};
+
+function caseView(slug){
+  const i = PROJECTS.findIndex(p=>p.slug===slug); if(i<0) return null;
+  const p = PROJECTS[i], next = PROJECTS[(i+1)%PROJECTS.length], prev = PROJECTS[(i-1+PROJECTS.length)%PROJECTS.length];
+  return `
+    <section class="page-hero"><div class="glow"></div><div class="wrap">
+      <div class="crumbs rv"><a href="#/projects">Projects</a><span>/</span><span>${p.name}</span></div>
+      <h1 class="rv d1">${p.name}</h1><p class="lead rv d2">${p.tagline}</p>
+    </div></section>
+    <section class="sec" style="padding-top:40px"><div class="wrap">
+      <div class="case-cover ${p.cover} rv">${screen('Project screenshot coming soon')}</div>
+      <div class="case-grid">
+        <aside class="facts">
+          <div class="rv"><span>Role</span><b>${p.role}</b></div>
+          <div class="rv d1"><span>Timeline</span><b>${p.period}</b></div>
+          ${p.company?`<div class="rv d2"><span>Company</span><b>${p.company}</b></div>`:''}
+          <div class="rv d3"><span>Type</span><b>${p.catLabel}</b></div>
+        </aside>
+        <div class="case-body">
+          <section class="rv"><h2>Overview</h2><p>${p.overview}</p></section>
+          <section><h2 class="rv">What I built</h2><ul class="checks">${p.built.map((b,k)=>`<li class="rv d${k%3+1}">${ICON.check}<span>${b}</span></li>`).join('')}</ul></section>
+          <section class="rv"><h2>Tech stack</h2><ul class="tags">${p.stack.map(s=>`<li>${s}</li>`).join('')}</ul></section>
+          <div class="case-nav">
+            <a class="btn btn-outline mag" href="#/projects/${prev.slug}">${ICON.back} ${prev.name}</a>
+            <a class="btn btn-primary mag" href="#/projects/${next.slug}">${next.name} ${ICON.arrow}</a>
+          </div>
+        </div>
+      </div>
+    </div></section>
+    ${ctaBand}`;
+}
+
+/* ======================= APP ======================= */
+const app = document.getElementById('app'), wipe = document.getElementById('wipe');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+let first = true, typedTimer, cleanup = [];
+
+function navHTML(active){ return PAGES.map(([p,l])=>`<a href="#${p}" class="${active===p?'active':''}">${l}</a>`).join(''); }
+function setNav(path){
+  const top = path.startsWith('/projects') ? '/projects' : path;
+  document.getElementById('links').innerHTML = navHTML(top);
+  document.getElementById('mobile').innerHTML = navHTML(top);
+  document.getElementById('flinks').innerHTML = PAGES.map(([p,l])=>`<li><a href="#${p}">${l}</a></li>`).join('');
+}
+
+function route(){
+  const path = (location.hash.replace(/^#/,'') || '/').replace(/\/$/,'') || '/';
+  let html, title;
+  if (path.startsWith('/projects/')){ html = caseView(path.split('/')[2]); const p = PROJECTS.find(x=>x.slug===path.split('/')[2]); title = p ? p.name + ' case study' : ''; }
+  else if (VIEWS[path]) { html = VIEWS[path](); title = (PAGES.find(x=>x[0]===path)||[])[1]; }
+  if (!html){ location.hash = '#/'; return; }
+  const render = () => {
+    cleanup.forEach(f=>f()); cleanup = []; clearTimeout(typedTimer);
+    app.innerHTML = html; setNav(path);
+    document.title = (path==='/' ? 'Simarpreet Singh | Backend Software Engineer' : `${title} | Simarpreet Singh`);
+    window.scrollTo(0,0); document.body.classList.remove('menu-open');
+    initPage();
+  };
+  if (first || reduce){ first = false; render(); return; }
+  wipe.className = 'in';
+  setTimeout(()=>{ render(); wipe.className = 'out'; }, 450);
+}
+
+function initPage(){
+  /* reveals */
+  const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }),{threshold:.12, rootMargin:'0px 0px -40px 0px'});
+  app.querySelectorAll('.rv').forEach(el=>io.observe(el));
+  cleanup.push(()=>io.disconnect());
+
+  /* counters */
+  const cio = new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) return; const el=e.target, to=+el.dataset.to, dec=+el.dataset.dec||0; cio.unobserve(el);
+    if(reduce){ el.textContent=to.toFixed(dec); return; }
+    const t0=performance.now(); (function f(t){ const k=Math.min((t-t0)/1800,1), v=to*(1-Math.pow(1-k,3)); el.textContent=v.toFixed(dec); if(k<1) requestAnimationFrame(f); })(t0); }),{threshold:.5});
+  app.querySelectorAll('.count').forEach(el=>cio.observe(el));
+  cleanup.push(()=>cio.disconnect());
+
+  /* typed roles */
+  const typed = document.getElementById('typed');
+  if (typed){
+    const words = ['scalable REST APIs','multi-tenant SaaS','secure auth systems','reliable integrations','AI agents with RAG'];
+    if (reduce) typed.textContent = words[0];
+    else { let w=0,c=0,del=false; (function tick(){ const word=words[w]; typed.textContent = word.slice(0,c);
+      if(!del && c<word.length){c++; typedTimer=setTimeout(tick,60)} else if(!del){del=true; typedTimer=setTimeout(tick,1800)}
+      else if(c>0){c--; typedTimer=setTimeout(tick,30)} else {del=false; w=(w+1)%words.length; typedTimer=setTimeout(tick,300)} })(); }
+  }
+
+  /* timeline rail */
+  const tl = document.getElementById('tl'), rail = document.getElementById('rail');
+  if (tl && rail){ const f=()=>{ const b=tl.getBoundingClientRect(); const k=Math.min(Math.max((innerHeight*.7-b.top)/b.height,0),1); rail.style.transform=`scaleY(${reduce?1:k})`; }; f(); addEventListener('scroll',f,{passive:true}); cleanup.push(()=>removeEventListener('scroll',f)); }
+
+  /* project filters */
+  const filters = document.getElementById('filters');
+  if (filters) filters.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+    filters.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    app.querySelectorAll('.pcard').forEach(c=>c.classList.toggle('hidden', b.dataset.f!=='all' && c.dataset.cat!==b.dataset.f)); });
+
+  /* contact form -> mailto */
+  const form = document.getElementById('cform');
+  if (form) form.addEventListener('submit',e=>{ e.preventDefault(); const d=new FormData(form), note=document.getElementById('fnote');
+    if(!d.get('name')||!d.get('email')||!d.get('msg')){ note.textContent='Fill in your name, email and message to send.'; note.className='form-note err'; return; }
+    note.textContent='Opening your email app…'; note.className='form-note';
+    location.href=`mailto:isimarpreet26@gmail.com?subject=${encodeURIComponent('Hello from '+d.get('name'))}&body=${encodeURIComponent(d.get('msg')+'\n\n— '+d.get('name')+' ('+d.get('email')+')')}`; });
+
+  /* spotlight */
+  app.querySelectorAll('.spot').forEach(el=>el.addEventListener('pointermove',e=>{ const b=el.getBoundingClientRect(); el.style.setProperty('--mx',(e.clientX-b.left)+'px'); el.style.setProperty('--my',(e.clientY-b.top)+'px'); }));
+
+  if (fine && !reduce){
+    /* subtle tilt */
+    app.querySelectorAll('.tilt').forEach(el=>{
+      el.addEventListener('mousemove',e=>{ const b=el.getBoundingClientRect(), x=(e.clientX-b.left)/b.width-.5, y=(e.clientY-b.top)/b.height-.5; el.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg)`; });
+      el.addEventListener('mouseleave',()=>el.style.transform='');
+    });
+    /* hero parallax */
+    const hero = document.getElementById('hero'), pw = document.getElementById('pwrap');
+    if (hero && pw) hero.addEventListener('mousemove',e=>{ const x=e.clientX/innerWidth-.5, y=e.clientY/innerHeight-.5;
+      pw.querySelectorAll('.chip').forEach((c,i)=>c.style.translate=`${x*(i?-28:28)}px ${y*(i?-20:20)}px`); });
+  }
+  bindInteractive(app);
+}
+
+/* magnetic buttons + cursor hover states */
+function bindInteractive(root){
+  if (!fine || reduce) return;
+  root.querySelectorAll('.mag').forEach(el=>{ if(el._mag) return; el._mag=1;
+    el.addEventListener('mousemove',e=>{ const b=el.getBoundingClientRect(); el.style.transform=`translate(${(e.clientX-b.left-b.width/2)*.22}px,${(e.clientY-b.top-b.height/2)*.3}px)`; });
+    el.addEventListener('mouseleave',()=>el.style.transform=''); });
+  root.querySelectorAll('a,button,input,textarea').forEach(el=>{ if(el._cur) return; el._cur=1;
+    el.addEventListener('mouseenter',()=>ring.classList.add('hover')); el.addEventListener('mouseleave',()=>ring.classList.remove('hover')); });
+}
+
+/* cursor */
+const dot=document.getElementById('dot'), ring=document.getElementById('ring');
+if (fine && !reduce){
+  let mx=-100,my=-100,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; dot.style.transform=`translate(${mx}px,${my}px)`; document.body.classList.add('cursor-on'); });
+  document.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-on'));
+  (function loop(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; ring.style.transform=`translate(${rx}px,${ry}px)`; requestAnimationFrame(loop); })();
+}
+
+/* global: nav state, progress, burger */
+const nav=document.getElementById('nav'), prog=document.getElementById('progress');
+addEventListener('scroll',()=>{ const y=scrollY, h=document.documentElement.scrollHeight-innerHeight; nav.classList.toggle('scrolled',y>10); prog.style.transform=`scaleX(${h>0?y/h:0})`; },{passive:true});
+const burger=document.getElementById('burger');
+burger.addEventListener('click',()=>{ const o=document.body.classList.toggle('menu-open'); burger.setAttribute('aria-expanded',o); });
+
+addEventListener('hashchange',route);
+route();
+bindInteractive(document);
+</script>
+</body>
+</html>
